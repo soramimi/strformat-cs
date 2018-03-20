@@ -439,7 +439,7 @@ namespace Soramimi {
 			return value;
 		}
 
-		private void format(Func<char, Part> callback, int width, int precision)
+		private void format(Func<int, Part> callback, int width, int precision)
 		{
 			if (advance(false)) {
 				if (charAt(next_) == '%') {
@@ -491,7 +491,7 @@ namespace Soramimi {
 						c = Char.ToLower(c);
 					}
 					if (Char.IsLetter(c)) {
-						p = callback(c);
+						p = callback((int)c);
 						next_++;
 					}
 					if (p != null) {
@@ -521,6 +521,148 @@ namespace Soramimi {
 			}
 		}
 
+		private Part format_c(char v)
+		{
+			Part p = new Part();
+			p.data = new char[1];
+			p.data[0] = v;
+			return p;
+		}
+
+		private Part format_f(double value, bool trim_unnecessary_zeros)
+		{
+			int pr = precision_;
+			if (pr < 0) pr = 6;
+			return format_double(value, pr, false, force_sign_);
+		}
+
+		private Part format(double value, int hint)
+		{
+			if (hint != 0) {
+				switch (hint) {
+				case 'c': return format_c((char)value);
+				case 'd': return format((long)value, 0);
+				case 'u': return format((ulong)value, 0);
+				case 'o': return format_o64((ulong)value, 0);
+				case 'x': return format_x64((ulong)value, 0);
+				case 's': return format_f(value, true);
+				}
+			}
+			return format_f(value, false);
+		}
+
+		private Part format(int value, int hint)
+		{
+			if (hint != 0) {
+				switch (hint) {
+				case 'c': return format_c((char)value);
+				case 'u': return format((uint)value, 0);
+				case 'o': return format_o32((uint)value, 0);
+				case 'x': return format_x32((uint)value, 0);
+				case 'f': return format((double)value, 0);
+				}
+			}
+			return format_int32(value, force_sign_);
+		}
+
+		private Part format(uint value, int hint)
+		{
+			if (hint != 0) {
+				switch (hint) {
+				case 'c': return format_c((char)value);
+				case 'd': return format((int)value, 0);
+				case 'o': return format_o32(value, 0);
+				case 'x': return format_x32(value, 0);
+				case 'f': return format((double)value, 0);
+				}
+			}
+			return format_uint32(value);
+		}
+
+		private Part format(long value, int hint)
+		{
+			if (hint != 0) {
+				switch (hint) {
+				case 'c': return format_c((char)value);
+				case 'u': return format((ulong)value, 0);
+				case 'o': return format_o64((ulong)value, 0);
+				case 'x': return format_x64((ulong)value, 0);
+				case 'f': return format((double)value, 0);
+				}
+			}
+			return format_int64(value, force_sign_);
+		}
+
+		private Part format(ulong value, int hint)
+		{
+			if (hint != 0) {
+				switch (hint) {
+				case 'c': return format_c((char)value);
+				case 'd': return format((long)value, 0);
+				case 'o': return format_oct64(value, false);
+				case 'x': return format_hex64(value, false);
+				case 'f': return format((double)value, 0);
+				}
+			}
+			return format_uint64(value);
+		}
+
+		private Part format_o32(uint value, int hint)
+		{
+			if (hint != 0) {
+				switch (hint) {
+				case 'c': return format_c((char)value);
+				case 'd': return format(value, 0);
+				case 'u': return format(value, 0);
+				case 'x': return format_x32(value, 0);
+				case 'f': return format((double)value, 0);
+				}
+			}
+			return format_oct32(value, upper_);
+		}
+
+		private Part format_o64(ulong value, int hint)
+		{
+			if (hint != 0) {
+				switch (hint) {
+				case 'c': return format_c((char)value);
+				case 'd': return format((long)value, 0);
+				case 'u': return format(value, 0);
+				case 'x': return format_x64(value, 0);
+				case 'f': return format((double)value, 0);
+				}
+			}
+			return format_oct64(value, upper_);
+		}
+
+		private Part format_x32(uint value, int hint)
+		{
+			if (hint != 0) {
+				switch (hint) {
+				case 'c': return format_c((char)value);
+				case 'd': return format(value, 0);
+				case 'u': return format(value, 0);
+				case 'o': return format_o32(value, 0);
+				case 'f': return format((double)value, 0);
+				}
+			}
+			return format_hex32(value, upper_);
+		}
+
+		private Part format_x64(ulong value, int hint)
+		{
+			if (hint != 0) {
+				switch (hint) {
+				case 'c': return format_c((char)value);
+				case 'd': return format((long)value, 0);
+				case 'u': return format(value, 0);
+				case 'o': return format_o64(value, 0);
+				case 'f': return format((double)value, 0);
+				}
+			}
+			return format_hex64(value, upper_);
+		}
+
 		public strformat a(Object v)
 		{
 			format((c) => {
@@ -531,74 +673,72 @@ namespace Soramimi {
 
 		public strformat f(double v)
 		{
-			format((c) => {
-				int pr = precision_;
-				if (pr < 0) pr = 6;
-				return format_double(v, pr, false, force_sign_);
+			format((hint) => {
+				return format(v, hint);
 			}, -1, -1);
 			return this;
 		}
 
 		public strformat d(int v)
 		{
-			format((c) => {
-				return format_int32(v, force_sign_);
+			format((hint) => {
+				return format(v, hint);
 			}, -1, -1);
 			return this;
 		}
 
 		public strformat u(uint v)
 		{
-			format((c) => {
-				return format_uint32(v);
+			format((hint) => {
+				return format(v, hint);
 			}, -1, -1);
 			return this;
 		}
 
-		public strformat ld(int v)
+		public strformat ld(long v)
 		{
-			format((c) => {
-				return format_int64(v, force_sign_);
+			format((hint) => {
+				return format(v, hint);
 			}, -1, -1);
 			return this;
 		}
 
 		public strformat lu(uint v)
 		{
-			format((c) => {
-				return format_uint64(v);
+			format((hint) => {
+				return format(v, hint);
 			}, -1, -1);
 			return this;
 		}
 
 		public strformat x(uint v)
 		{
-			format((c) => {
-				return format_hex32(v, upper_);
+			format((hint) => {
+				return format(v, hint);
 			}, -1, -1);
 			return this;
 		}
 
 		public strformat lx(ulong v)
 		{
-			format((c) => {
-				return format_hex64(v, upper_);
+			format((hint) => {
+				return format(v, hint);
 			}, -1, -1);
 			return this;
 		}
 
 		public strformat o(uint v)
 		{
-			format((c) => {
-				return format_oct32(v, upper_);
+			format((hint) => {
+				return format(v, hint);
 			}, -1, -1);
 			return this;
 		}
 
 		public strformat lo(ulong v)
 		{
-			format((c) => {
-				return format_oct64(v, upper_);
+			format((hint) => {
+				return format(v, hint);
 			}, -1, -1);
 			return this;
 		}
