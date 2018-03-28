@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -607,6 +608,59 @@ namespace Soramimi {
 			return format_uint64(value);
 		}
 
+		private Part format(String value, int hint)
+		{
+			if (hint != 0) {
+				try {
+					switch (hint) {
+					case 'c': {
+							int v = Convert.ToInt32(value, 10);
+							return format(v, 0);
+						}
+					case 'd':
+						if (lflag_ == 0) {
+							int v = Convert.ToInt32(value, 10);
+							return format(v, 0);
+						} else {
+							long v = Convert.ToInt64(value, 10);
+							return format(v, 0);
+						}
+					case 'u':
+						if (lflag_ == 0) {
+							uint v = Convert.ToUInt32(value, 10);
+							return format(v, 0);
+						} else {
+							ulong v = Convert.ToUInt64(value, 10);
+							return format(v, 0);
+						}
+					case 'o':
+						if (lflag_ == 0) {
+							uint v = Convert.ToUInt32(value, 8);
+							return format(v, 0);
+						} else {
+							ulong v = Convert.ToUInt64(value, 8);
+							return format(v, 0);
+						}
+					case 'x':
+						if (lflag_ == 0) {
+							uint v = Convert.ToUInt32(value, 16);
+							return format(v, 0);
+						} else {
+							ulong v = Convert.ToUInt64(value, 16);
+							return format(v, 0);
+						}
+					case 'f': {
+							double v = Double.Parse(value);
+							return format(v, 0);
+						}
+					}
+				} catch (FormatException) {
+					value = "0";
+				}
+			}
+			return alloc_part(value);
+		}
+
 		private Part format_o32(uint value, int hint)
 		{
 			if (hint != 0) {
@@ -679,6 +733,14 @@ namespace Soramimi {
 			return this;
 		}
 
+		public strformat c(char v)
+		{
+			format((hint) => {
+				return format(v, hint);
+			}, -1, -1);
+			return this;
+		}
+
 		public strformat d(int v)
 		{
 			format((hint) => {
@@ -736,6 +798,14 @@ namespace Soramimi {
 		}
 
 		public strformat lo(ulong v)
+		{
+			format((hint) => {
+				return format(v, hint);
+			}, -1, -1);
+			return this;
+		}
+
+		public strformat s(String v)
 		{
 			format((hint) => {
 				return format(v, hint);

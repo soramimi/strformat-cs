@@ -9,7 +9,7 @@ namespace StringFormatter {
 	class Test {
 		static void Main(string[] args)
 		{
-			strformat.New("(%010.4f)").f(123.456789).PrintOut();
+			strformat.New("(%c)").c('@').PrintOut();
 		}
 	}
 }
