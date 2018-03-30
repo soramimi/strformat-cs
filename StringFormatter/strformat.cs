@@ -11,6 +11,342 @@ namespace Soramimi {
 		private const String digits_upper = "0123456789ABCDEF";
 		private const String digits_lower = "0123456789abcdef";
 
+		public static int strtol(char[] str, int radix)
+		{
+			int value = 0;
+			int pos = 0;
+			bool sign = false;
+			while (pos < str.Length) {
+				char c = str[pos];
+				if (!Char.IsWhiteSpace(c)) {
+					break;
+				}
+				pos++;
+			}
+			if (pos < str.Length) {
+				char c = str[pos];
+				if (c == '+') {
+					pos++;
+				} else if (c == '-') {
+					pos++;
+					sign = true;
+				}
+			}
+			if (pos < str.Length) {
+				char c = str[pos];
+				if (c == '0') {
+					pos++;
+					if (pos < str.Length) {
+						char d = str[pos];
+						if (d == 'x' || d == 'X') {
+							pos++;
+							if (radix == 0) {
+								radix = 16;
+							}
+						} else {
+							if (radix == 0) {
+								radix = 8;
+							}
+						}
+					}
+				}
+			}
+			if (radix != 8 && radix != 16) {
+				radix = 10;
+			}
+			while (pos < str.Length) {
+				int n = -1;
+				char c = Char.ToUpper(str[pos]);
+				pos++;
+				if (Char.IsDigit(c)) {
+					n = c - '0';
+				} else if (Char.IsLetter(c)) {
+					n = (c - 'A') + 10;
+				}
+				if (n < 0 || n >= radix) {
+					break;
+				}
+				if (sign) {
+					if (radix == 8 && value < (-2147483648 / 8)) {
+						break;
+					} else if (radix == 10 && value < (-2147483648 / 10)) {
+						break;
+					} else if (radix == 16 && value < (-2147483648 / 16)) {
+						break;
+					}
+					if (value < -2147483648 + n) {
+						break;
+					}
+					value = value * radix - n;
+				} else {
+					if (radix == 8 && value > (2147483647 / 8)) {
+						break;
+					} else if (radix == 10 && value > (2147483647 / 10)) {
+						break;
+					} else if (radix == 16 && value > (2147483647 / 16)) {
+						break;
+					}
+					if (value > 2147483647 - n) {
+						break;
+					}
+					value = value * radix + n;
+				}
+			}
+			return value;
+		}
+
+		public static long strtoll(char[] str, int radix)
+		{
+			long value = 0;
+			int pos = 0;
+			bool sign = false;
+			while (pos < str.Length) {
+				char c = str[pos];
+				if (!Char.IsWhiteSpace(c)) {
+					break;
+				}
+				pos++;
+			}
+			if (pos < str.Length) {
+				char c = str[pos];
+				if (c == '+') {
+					pos++;
+				} else if (c == '-') {
+					pos++;
+					sign = true;
+				}
+			}
+			if (pos < str.Length) {
+				char c = str[pos];
+				if (c == '0') {
+					pos++;
+					if (pos < str.Length) {
+						char d = str[pos];
+						if (d == 'x' || d == 'X') {
+							pos++;
+							if (radix == 0) {
+								radix = 16;
+							}
+						} else {
+							if (radix == 0) {
+								radix = 8;
+							}
+						}
+					}
+				}
+			}
+			if (radix != 8 && radix != 16) {
+				radix = 10;
+			}
+			while (pos < str.Length) {
+				int n = -1;
+				char c = Char.ToUpper(str[pos]);
+				pos++;
+				if (Char.IsDigit(c)) {
+					n = c - '0';
+				} else if (Char.IsLetter(c)) {
+					n = (c - 'A') + 10;
+				}
+				if (n < 0 || n >= radix) {
+					break;
+				}
+				if (sign) {
+					if (radix == 8 && value < (-9223372036854775808 / 8)) {
+						break;
+					} else if (radix == 10 && value < (-9223372036854775808 / 10)) {
+						break;
+					} else if (radix == 16 && value < (-9223372036854775808 / 16)) {
+						break;
+					}
+					if (value < -9223372036854775808 + n) {
+						break;
+					}
+					value = value * radix - n;
+				} else {
+					if (radix == 8 && value > (9223372036854775807 / 8)) {
+						break;
+					} else if (radix == 10 && value > (9223372036854775807 / 10)) {
+						break;
+					} else if (radix == 16 && value > (9223372036854775807 / 16)) {
+						break;
+					}
+					if (value > 9223372036854775807 - n) {
+						break;
+					}
+					value = value * radix + n;
+				}
+			}
+			return value;
+		}
+
+		public static uint strtoul(char[] str, int radix)
+		{
+			uint value = 0;
+			int pos = 0;
+			bool sign = false;
+			while (pos < str.Length) {
+				char c = str[pos];
+				if (!Char.IsWhiteSpace(c)) {
+					break;
+				}
+				pos++;
+			}
+			if (pos < str.Length) {
+				char c = str[pos];
+				if (c == '+') {
+					pos++;
+				} else if (c == '-') {
+					pos++;
+					sign = true;
+				}
+			}
+			if (pos < str.Length) {
+				char c = str[pos];
+				if (c == '0') {
+					pos++;
+					if (pos < str.Length) {
+						char d = str[pos];
+						if (d == 'x' || d == 'X') {
+							pos++;
+							if (radix == 0) {
+								radix = 16;
+							}
+						} else {
+							if (radix == 0) {
+								radix = 8;
+							}
+						}
+					}
+				}
+			}
+			if (radix != 8 && radix != 16) {
+				radix = 10;
+			}
+			while (pos < str.Length) {
+				int n = -1;
+				char c = Char.ToUpper(str[pos]);
+				pos++;
+				if (Char.IsDigit(c)) {
+					n = c - '0';
+				} else if (Char.IsLetter(c)) {
+					n = (c - 'A') + 10;
+				}
+				if (n < 0 || n >= radix) {
+					break;
+				}
+				if (radix == 8 && value > (4294967295 / 8)) {
+					break;
+				} else if (radix == 10 && value > (4294967295 / 10)) {
+					break;
+				} else if (radix == 16 && value > (4294967295 / 16)) {
+					break;
+				}
+				if (value > 4294967295 - n) {
+					break;
+				}
+				uint v = (value * (uint)radix) + (uint)n;
+				if (sign && v > 2147483648) {
+					break;
+				}
+				value = v;
+			}
+			return sign ? (uint)-value : value;
+		}
+
+		public static ulong strtoull(char[] str, int radix)
+		{
+			ulong value = 0;
+			int pos = 0;
+			bool sign = false;
+			while (pos < str.Length) {
+				char c = str[pos];
+				if (!Char.IsWhiteSpace(c)) {
+					break;
+				}
+				pos++;
+			}
+			if (pos < str.Length) {
+				char c = str[pos];
+				if (c == '+') {
+					pos++;
+				} else if (c == '-') {
+					pos++;
+					sign = true;
+				}
+			}
+			if (pos < str.Length) {
+				char c = str[pos];
+				if (c == '0') {
+					pos++;
+					if (pos < str.Length) {
+						char d = str[pos];
+						if (d == 'x' || d == 'X') {
+							pos++;
+							if (radix == 0) {
+								radix = 16;
+							}
+						} else {
+							if (radix == 0) {
+								radix = 8;
+							}
+						}
+					}
+				}
+			}
+			if (radix != 8 && radix != 16) {
+				radix = 10;
+			}
+			while (pos < str.Length) {
+				int n = -1;
+				char c = Char.ToUpper(str[pos]);
+				pos++;
+				if (Char.IsDigit(c)) {
+					n = c - '0';
+				} else if (Char.IsLetter(c)) {
+					n = (c - 'A') + 10;
+				}
+				if (n < 0 || n >= radix) {
+					break;
+				}
+				if (radix == 8 && value > (18446744073709551615 / 8)) {
+					break;
+				} else if (radix == 10 && value > (18446744073709551615 / 10)) {
+					break;
+				} else if (radix == 16 && value > (18446744073709551615 / 16)) {
+					break;
+				}
+				if (value > 18446744073709551615 - (ulong)n) {
+					break;
+				}
+				ulong v = (value * (ulong)radix) + (ulong)n;
+				if (sign && v > 9223372036854775808) {
+					break;
+				}
+				value = v;
+			}
+			return value;
+		}
+
+		public static int strtol(String str, int radix)
+		{
+			return strtol(str.ToCharArray(), radix);
+		}
+
+		public static long strtoll(String str, int radix)
+		{
+			return strtoll(str.ToCharArray(), radix);
+		}
+
+		public static uint strtoul(String str, int radix)
+		{
+			return strtoul(str.ToCharArray(), radix);
+		}
+
+		public static ulong strtoull(String str, int radix)
+		{
+			return strtoull(str.ToCharArray(), radix);
+		}
+
 		class Part {
 			public char[] data;
 		}
@@ -611,51 +947,47 @@ namespace Soramimi {
 		private Part format(String value, int hint)
 		{
 			if (hint != 0) {
-				try {
-					switch (hint) {
-					case 'c': {
-							int v = Convert.ToInt32(value, 10);
-							return format(v, 0);
-						}
-					case 'd':
-						if (lflag_ == 0) {
-							int v = Convert.ToInt32(value, 10);
-							return format(v, 0);
-						} else {
-							long v = Convert.ToInt64(value, 10);
-							return format(v, 0);
-						}
-					case 'u':
-						if (lflag_ == 0) {
-							uint v = Convert.ToUInt32(value, 10);
-							return format(v, 0);
-						} else {
-							ulong v = Convert.ToUInt64(value, 10);
-							return format(v, 0);
-						}
-					case 'o':
-						if (lflag_ == 0) {
-							uint v = Convert.ToUInt32(value, 8);
-							return format(v, 0);
-						} else {
-							ulong v = Convert.ToUInt64(value, 8);
-							return format(v, 0);
-						}
-					case 'x':
-						if (lflag_ == 0) {
-							uint v = Convert.ToUInt32(value, 16);
-							return format(v, 0);
-						} else {
-							ulong v = Convert.ToUInt64(value, 16);
-							return format(v, 0);
-						}
-					case 'f': {
-							double v = Double.Parse(value);
-							return format(v, 0);
-						}
+				switch (hint) {
+				case 'c': {
+						int v = strtol(value, 10);
+						return format(v, 0);
 					}
-				} catch (FormatException) {
-					value = "0";
+				case 'd':
+					if (lflag_ == 0) {
+						int v = strtol(value, 0);
+						return format(v, 0);
+					} else {
+						long v = strtoll(value, 0);
+						return format(v, 0);
+					}
+				case 'u':
+					if (lflag_ == 0) {
+						uint v = strtoul(value, 0);
+						return format(v, 0);
+					} else {
+						ulong v = strtoull(value, 0);
+						return format(v, 0);
+					}
+				case 'o':
+					if (lflag_ == 0) {
+						uint v = strtoul(value, 0);
+						return format_oct32(v, upper_);
+					} else {
+						ulong v = strtoull(value, 0);
+						return format_oct64(v, upper_);
+					}
+				case 'x':
+					if (lflag_ == 0) {
+						uint v = strtoul(value, 0);
+						return format_hex32(v, upper_);
+					} else {
+						ulong v = strtoull(value, 0);
+						return format_hex64(v, upper_);
+					}
+				case 'f': {
+						double v = Double.Parse(value);
+						return format(v, 0);
+					}
 				}
 			}
 			return alloc_part(value);
