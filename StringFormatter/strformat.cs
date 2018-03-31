@@ -1097,7 +1097,7 @@ namespace Soramimi {
 			return this;
 		}
 
-		public strformat lu(uint v)
+		public strformat lu(ulong v)
 		{
 			format((hint) => {
 				return format(v, hint);
@@ -1158,13 +1158,13 @@ namespace Soramimi {
 		public void PrintOut()
 		{
 			String s = ToString();
-			Console.WriteLine(s);
+			Console.Write(s);
 		}
 
 		public void PrintErr()
 		{
 			String s = ToString();
-			Console.Error.WriteLine(s);
+			Console.Error.Write(s);
 		}
 
 	}
