@@ -1,0 +1,7 @@
+strformat/bin/
+strformat/obj/
+.vs/
+bin/
+obj/
+*.exe
+.vscode/
